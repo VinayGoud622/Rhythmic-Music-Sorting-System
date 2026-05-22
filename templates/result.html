@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Results — SoundSort</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #07070f;
+      --surface: #10101e;
+      --accent: #c8ff57;
+      --accent2: #ff5ef4;
+      --text: #f0f0f8;
+      --muted: #6b6b8a;
+      --border: #1e1e36;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; min-height: 100vh; }
+
+    nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.25rem 2.5rem; border-bottom: 1px solid var(--border);
+    }
+    .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; text-decoration: none; color: var(--text); }
+    .logo span { color: var(--accent); }
+    nav a.back { color: var(--muted); text-decoration: none; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+    nav a.back:hover { color: var(--text); }
+
+    .container { max-width: 960px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+    .page-header { margin-bottom: 3rem; animation: fadeUp 0.5s ease both; }
+    .page-header .tag { display: inline-block; background: rgba(200,255,87,0.1); color: var(--accent); border: 1px solid rgba(200,255,87,0.25); border-radius: 2px; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 0.25rem 0.7rem; margin-bottom: 1rem; }
+    .page-header h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 2.8rem; letter-spacing: -0.03em; line-height: 1; }
+
+    /* Stat cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 2.5rem;
+      animation: fadeUp 0.5s 0.1s ease both;
+    }
+    .stat { background: var(--surface); padding: 1.5rem; }
+    .stat .label { color: var(--muted); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .stat .value { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 2rem; color: var(--accent); }
+    .stat .unit { color: var(--muted); font-size: 0.72rem; margin-top: 0.2rem; }
+
+    /* Plot */
+    .plot-section {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 2.5rem;
+      animation: fadeUp 0.5s 0.2s ease both;
+    }
+    .plot-section .plot-header {
+      background: var(--surface);
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+    }
+    .plot-section img { width: 100%; display: block; }
+
+    /* Genre table */
+    .genre-section {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 2.5rem;
+      animation: fadeUp 0.5s 0.3s ease both;
+    }
+    .genre-section .table-header {
+      background: var(--surface);
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: var(--surface); color: var(--muted); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; text-align: left; padding: 0.8rem 1.5rem; border-bottom: 1px solid var(--border); }
+    td { padding: 0.9rem 1.5rem; font-size: 0.85rem; border-bottom: 1px solid var(--border); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .bar-wrap { display: flex; align-items: center; gap: 0.75rem; }
+    .bar { height: 6px; border-radius: 3px; background: var(--accent); flex-shrink: 0; }
+    .bar-count { color: var(--muted); font-size: 0.78rem; }
+
+    /* Actions */
+    .actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      animation: fadeUp 0.5s 0.4s ease both;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: var(--accent); color: #07070f;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem;
+      padding: 0.85rem 1.75rem; border-radius: 4px; text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border);
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem;
+      padding: 0.85rem 1.75rem; border-radius: 4px; text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--text); }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo">Sound<span>Sort</span></a>
+    <a href="/upload" class="back">← New upload</a>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <div class="tag">✦ Analysis Complete</div>
+      <h1>Your results</h1>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="label">Total Tracks</div>
+        <div class="value">{{ stats.total_songs }}</div>
+        <div class="unit">songs analysed</div>
+      </div>
+      <div class="stat">
+        <div class="label">Clusters Found</div>
+        <div class="value">{{ stats.num_clusters }}</div>
+        <div class="unit">auto-optimised</div>
+      </div>
+      <div class="stat">
+        <div class="label">Avg Tempo</div>
+        <div class="value">{{ stats.avg_tempo }}</div>
+        <div class="unit">BPM</div>
+      </div>
+      <div class="stat">
+        <div class="label">Avg Energy</div>
+        <div class="value">{{ "%.2f"|format(stats.avg_energy) }}</div>
+        <div class="unit">out of 1.0</div>
+      </div>
+      <div class="stat">
+        <div class="label">Avg Dance</div>
+        <div class="value">{{ "%.2f"|format(stats.avg_danceability) }}</div>
+        <div class="unit">danceability</div>
+      </div>
+    </div>
+
+    <!-- Plot -->
+    <div class="plot-section">
+      <div class="plot-header">📊 Cluster Visualisation</div>
+      <img src="{{ url_for('static', filename=plot_file) }}" alt="Genre cluster plot"/>
+    </div>
+
+    <!-- Genre distribution table -->
+    <div class="genre-section">
+      <div class="table-header">🎵 Genre Distribution</div>
+      {% set max_count = stats.genre_distribution.values() | max %}
+      <table>
+        <thead>
+          <tr>
+            <th>Genre</th>
+            <th>Tracks</th>
+            <th>Distribution</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for genre, count in stats.genre_distribution.items() | sort(attribute='1', reverse=True) %}
+          <tr>
+            <td>{{ genre }}</td>
+            <td>{{ count }}</td>
+            <td>
+              <div class="bar-wrap">
+                <div class="bar" style="width: {{ (count / max_count * 200) | int }}px;"></div>
+                <span class="bar-count">{{ "%.1f"|format(count / stats.total_songs * 100) }}%</span>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <a href="/download/{{ output_file }}" class="btn-primary">⬇ Download labelled CSV</a>
+      <a href="/upload" class="btn-secondary">↑ Analyse another file</a>
+    </div>
+  </div>
+</body>
+</html>

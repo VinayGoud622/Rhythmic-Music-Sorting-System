@@ -1,0 +1,26 @@
+song,artist,tempo,energy,danceability,Cluster,Predicted_Genre
+Blinding Lights,The Weeknd,171,0.8,0.7,1,Rock / Metal
+Shape of You,Ed Sheeran,96,0.65,0.82,0,Pop
+Levitating,Dua Lipa,103,0.75,0.8,0,Pop
+Believer,Imagine Dragons,125,0.85,0.65,1,Rock / Metal
+Senorita,Shawn Mendes,117,0.6,0.78,0,Pop
+STAY,Justin Bieber,170,0.8,0.75,1,Dance / EDM
+Industry Baby,Lil Nas X,150,0.9,0.72,1,Dance / EDM
+Peaches,Justin Bieber,90,0.55,0.8,0,Pop
+Bad Guy,Billie Eilish,135,0.65,0.85,0,Pop
+Sunflower,Post Malone,90,0.5,0.75,0,Pop
+Perfect,Ed Sheeran,95,0.4,0.6,0,Chill / Acoustic
+Dynamite,BTS,114,0.8,0.82,0,Other / Ambient
+Butter,BTS,110,0.78,0.84,0,Other / Ambient
+Rockstar,DaBaby,160,0.85,0.7,1,Rock / Metal
+Attention,Charlie Puth,100,0.65,0.75,0,Pop
+Counting Stars,OneRepublic,122,0.75,0.68,1,Pop
+Faded,Alan Walker,90,0.7,0.6,0,Other / Ambient
+Closer,The Chainsmokers,95,0.6,0.75,0,Pop
+Sorry,Justin Bieber,100,0.7,0.82,0,Pop
+Havana,Camila Cabello,105,0.6,0.8,0,Pop
+Cheap Thrills,Sia,90,0.7,0.85,0,Pop
+Dance Monkey,Tones and I,98,0.65,0.82,0,Pop
+Thunder,Imagine Dragons,168,0.8,0.6,1,Rock / Metal
+Uptown Funk,Bruno Mars,115,0.9,0.88,0,High Energy / Electronic
+Wake Me Up,Avicii,124,0.85,0.7,1,Rock / Metal

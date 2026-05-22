@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upload — SoundSort</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #07070f;
+      --surface: #10101e;
+      --accent: #c8ff57;
+      --accent2: #ff5ef4;
+      --text: #f0f0f8;
+      --muted: #6b6b8a;
+      --border: #1e1e36;
+      --error: #ff6b6b;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; text-decoration: none; color: var(--text); }
+    .logo span { color: var(--accent); }
+    nav a.back { color: var(--muted); text-decoration: none; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+    nav a.back:hover { color: var(--text); }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+
+    .upload-card {
+      width: 100%;
+      max-width: 580px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3rem;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .upload-card h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 2rem;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+    }
+    .upload-card .desc {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    /* Drop zone */
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 6px;
+      padding: 3rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    .drop-zone.drag-over {
+      border-color: var(--accent);
+      background: rgba(200,255,87,0.04);
+    }
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .drop-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .drop-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.4rem; }
+    .drop-hint { color: var(--muted); font-size: 0.78rem; }
+    .file-chosen { margin-top: 0.75rem; color: var(--accent); font-size: 0.8rem; }
+
+    /* Requirements */
+    .requirements {
+      background: rgba(200,255,87,0.05);
+      border: 1px solid rgba(200,255,87,0.15);
+      border-radius: 5px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.75rem;
+    }
+    .requirements h4 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.75rem;
+    }
+    .requirements ul { list-style: none; }
+    .requirements li {
+      color: var(--muted);
+      font-size: 0.78rem;
+      padding: 0.25rem 0;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .requirements li::before { content: '→'; color: var(--accent); flex-shrink: 0; }
+
+    .btn {
+      width: 100%;
+      background: var(--accent);
+      color: #07070f;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    /* Flash errors */
+    .flash {
+      background: rgba(255,107,107,0.1);
+      border: 1px solid var(--error);
+      color: var(--error);
+      padding: 0.9rem 1.25rem;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    /* Loading overlay */
+    .loading { display: none; position: fixed; inset: 0; background: rgba(7,7,15,0.85); z-index: 200; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; }
+    .loading.active { display: flex; }
+    .spinner { width: 48px; height: 48px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.9s linear infinite; }
+    .loading p { color: var(--muted); font-size: 0.85rem; letter-spacing: 0.05em; }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo">Sound<span>Sort</span></a>
+    <a href="/" class="back">← Home</a>
+  </nav>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>Analysing your music data...</p>
+  </div>
+
+  <main>
+    <div class="upload-card">
+      <h1>Upload your data</h1>
+      <p class="desc">Provide a CSV with at least <strong>tempo</strong>, <strong>energy</strong>, and <strong>danceability</strong> columns. Optional: valence, acousticness, instrumentalness.</p>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="flash">⚠ {{ message }}</div>
+        {% endfor %}
+      {% endwith %}
+
+      <form action="/process" method="POST" enctype="multipart/form-data" id="uploadForm">
+        <div class="drop-zone" id="dropZone">
+          <input type="file" name="file" id="fileInput" accept=".csv" required/>
+          <div class="drop-icon">🎵</div>
+          <div class="drop-title">Drop your CSV here</div>
+          <div class="drop-hint">or click to browse — max 5 MB</div>
+          <div class="file-chosen" id="fileChosen"></div>
+        </div>
+
+        <div class="requirements">
+          <h4>Required columns</h4>
+          <ul>
+            <li><code>tempo</code> — beats per minute (e.g. 128.0)</li>
+            <li><code>energy</code> — intensity 0.0 – 1.0</li>
+            <li><code>danceability</code> — groove score 0.0 – 1.0</li>
+          </ul>
+        </div>
+
+        <button type="submit" class="btn" id="submitBtn">Analyse Music →</button>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    const dropZone   = document.getElementById('dropZone');
+    const fileInput  = document.getElementById('fileInput');
+    const fileChosen = document.getElementById('fileChosen');
+    const submitBtn  = document.getElementById('submitBtn');
+    const loading    = document.getElementById('loading');
+    const form       = document.getElementById('uploadForm');
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) fileChosen.textContent = '✓ ' + fileInput.files[0].name;
+    });
+
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      fileInput.files = e.dataTransfer.files;
+      if (fileInput.files[0]) fileChosen.textContent = '✓ ' + fileInput.files[0].name;
+    });
+
+    form.addEventListener('submit', () => {
+      submitBtn.disabled = true;
+      loading.classList.add('active');
+    });
+  </script>
+</body>
+</html>
